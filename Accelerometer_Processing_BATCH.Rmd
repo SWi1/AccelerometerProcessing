@@ -1,0 +1,73 @@
+---
+title: "Accelerometer_Processing_Simplified"
+author: "Stephanie Wilson"
+date: "April 19, 2023"
+output: pdf_document
+---
+
+# Accelerometer Processing Script
+
+**Information** - This script automates the processing of accelerometer files from the Actigraph software. This scripts assumes the software output is an excel file with variable names that do not change and that all Excel naming follows the same naming convention. Additionally, to ensure script function, the following files need to be present in the same folder.
+
+  - Accelerometer_Processing_Simple.Rmd
+  - Process_Accelerometer_Function.R
+  - Accelerometer Excel Files (with a similar naming convention)
+
+**Key Construction**
+A key for each file to be processed needs to be constructed. The general format requires:
+
+  - path: the file path in the working directory
+  - id_full: all identifying information related to the file
+  - time_short: an abbreviation of the time (can also be a condition abbreviation, ie C or E)
+  - time: an explanation of time (can also be a condition explanation, ie,     Control or Experimental)
+  - id: study abbreviation with participant number
+
+**Note**: If using conditions for time, adjustments will likely need to be made in the batch run code for string handling.
+
+**Output**  
+Expected output is a long csv file where every row represents a participant and columns are accelerometer variables.
+
+
+
+## Load packages and processing function
+```{r}
+library(tidyverse); library(readxl)
+source('Process_Accelerometer_Function.R')
+```
+
+
+## Batch Run Files
+
+Create a dataframe with data on files to be processed.
+```{r}
+filelist = data.frame(list.files(pattern = ".*.xlsx")) %>% #Grab all .xlsx files
+  rename('path' = 1) %>%
+  mutate(id_full = str_replace_all(path, '_data.xlsx', ''), # Remove path data
+         time_short = str_sub(id_full, start =-1), #Isolate time
+         time = ifelse(time_short == 'A', 'Pre', 'Post'), #Reformat Time
+         id = substring(id_full, 1, nchar(id_full) -1)) #removes the last character from each string
+       #  path = paste('\'', path, '\''))
+```
+
+Create Loop to Batch Run Every Excel File
+```{r warning = FALSE}
+finaloutput = data.frame()
+
+for(i in 1:nrow(filelist)){
+  
+  # Part I - filter
+  input = filelist[i, ]
+  
+  # Part II - Run function to process accelerometer files
+  output = process_accel(time = time, id = id, path = path, data = filelist[i,])
+ 
+  #Merge
+  finaloutput = rbind(finaloutput, output)
+}
+```
+
+Export Output
+```{r}
+write.csv(finaloutput, 'Accelerometer_long.csv', row.names = FALSE)
+```
+
