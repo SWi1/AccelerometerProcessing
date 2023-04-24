@@ -1,0 +1,49 @@
+---
+title: "Accelerometer_Processing_Simplified"
+author: "Stephanie Wilson"
+date: "April 19, 2023"
+output: pdf_document
+---
+
+# Accelerometer Processing Script
+
+Please refer to [README](https://github.com/SWi1/AccelerometerProcessing/blob/main/README.md) for additional start-up details.
+
+**Key Construction**
+A key for each file to be processed needs to be constructed. The general format requires:
+
+  - path: the file path in the working directory
+  - id_full: all identifying information related to the file
+  - time_short: an abbreviation of the time (can also be a condition abbreviation, ie C or E)
+  - time: an explanation of time (can also be a condition explanation, ie,     Control or Experimental)
+  - id: study abbreviation with participant number
+
+
+## Load packages and processing function
+```{r}
+library(tidyverse); library(readxl)
+source('Process_Accelerometer_Function.R')
+```
+
+## Process A Singular File
+
+**KEY STEP**: For your file of interest, complete information for each of the variables in the following dataframe. Entries must be kept in quotes.
+```{r}
+single_run = data.frame(id = 'P1', time = 'Pre', path = 'P1A_data.xlsx', time_short = 'A', id_full = 'P1A')
+```
+
+Run the function on one file
+```{r warning = FALSE}
+#Process File
+processed = process_accel(id = id, time = time, path = path, data = single_run)
+processed
+```
+
+Export Output
+```{r}
+output_path = paste(single_run$id_full, '_accelerometer_processed.csv', 
+                    sep = '')
+
+write.csv(processed, output_path, row.names = FALSE)
+```
+
