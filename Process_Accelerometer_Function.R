@@ -8,6 +8,7 @@ process_accel = function(id, time, path, data) {
   path = data$path
   
   #Load files
+  # Sheet number may change with User generated file, can change number to string with tab name
   summary = read_xlsx(path, sheet = 4)
   daily = read_xlsx(path, sheet = 3)
   
