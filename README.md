@@ -30,7 +30,7 @@ For these scripts to work on User generated Excel files, these scripts assume:
        - *A* indicates Time, MUST be a single letter, an additional if else statement is needed for every one level added to this variable. (Script runs on a variable with two levels). 
        - *_data.xlsx* as the remaining path name
 
-  2) Within each Excel file, data contains variable names in the 'Daily' and 'Summary' tabs that match the example input data
+  2) Excel files from ActiGraph follow default exporting parameters. Specifically, the data contains 'Daily' and 'Summary' tabs that match the example input data.
   
 ## Output Files
 Expected output is a csv file where a row represents a participant and columns are accelerometer period summary data.
